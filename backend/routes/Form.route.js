@@ -42,6 +42,24 @@ FormRouter.post("/submit", upload.single("photo"), async (req, res) => {
   }
 });
 
+FormRouter.get("/", async (req, res) => {
+  const payload = req.body;
+  try {
+    const forms = await FormModel.find(payload);
+    const formattedForms = forms.map((form) => ({
+      name: form.name,
+      age: form.age,
+      address: form.address,
+      photo: form.photo,
+    }));
+    res.send(formattedForms);
+  } catch (error) {
+    console.error({ msg: "not getting data", error: error.message });
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+
 module.exports = {
   FormRouter,
 };

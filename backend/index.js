@@ -11,12 +11,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 
-// app.get("/",(req,res)=>{
-//     res.send({"msg":"welcome to kryzen"})
-// })
+app.get("/",(req,res)=>{
+    res.send({"msg":"welcome to kryzen"})
+})
 
 app.use("/users",UserRouter)
-app.use("/",FormRouter)
+app.use("/forms",FormRouter)
 
 
 app.listen(process.env.PORT,async()=>{
