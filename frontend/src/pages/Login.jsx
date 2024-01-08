@@ -13,11 +13,8 @@ function handleChange(e) {
     setFormData((prev) => ({ ...prev, [name]: value }));
 }
 
-
-console.log("form", formData.name)
-async function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-
     if (formData.email == "" || formData.pass == "") {
         toast.error("Please enter all details first !", {
             position: toast.POSITION.TOP_RIGHT,
@@ -31,15 +28,27 @@ async function handleSubmit(e) {
             headers: {
                 "Content-type": "application/json"
             }
-        });
-        console.log(response)
-        console.log('backendData', response);
-        toast.success("Login Sucessfully !", {
-            position: toast.POSITION.TOP_RIGHT,
-        });
-        setTimeout(() => {
-            navigate("/")
-        }, 2000)
+        })
+        .then(res=>res.json())
+        .then(res=>{
+            console.log("res",res)
+            if(res.msg=="user Logggin"){
+              localStorage.setItem("token",res.token)
+              toast.success("Login Sucessfully !", {
+                position: toast.POSITION.TOP_RIGHT,
+               });
+             setTimeout(() => {  
+                navigate("/")
+             }, 2000)
+            }else{
+              // console.error('Error submitting form:', error.message);
+              toast.error("Something went wrong!.", {
+                  position: toast.POSITION.TOP_RIGHT,
+              });
+            }
+        })
+        .catch(err=>console.log(err))
+       
 
     } catch (error) {
         console.error('Error submitting form:', error.message);

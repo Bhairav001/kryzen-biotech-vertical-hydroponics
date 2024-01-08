@@ -5,6 +5,7 @@ import Navbar from './pages/Navbar'
 import HomePage from './components/HomePage'
 import Register from './pages/Register'
 import Login from './pages/Login'
+import Form from './pages/Form'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
          <Route path='/' element={<HomePage/>}/>
          <Route path='/register' element={<Register/>}/>
          <Route path='/login' element={<Login/>}/>
+         <Route path='/form' element={<Form/>}/>
        </Routes>
      </>
   )
