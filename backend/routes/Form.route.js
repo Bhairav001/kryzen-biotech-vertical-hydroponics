@@ -8,7 +8,7 @@ const upload = require("../middlewares/multerMiddleware");
 const { uploadOnCloudinary } = require("../cloudinary");
 const { FormModel } = require("../model/Form.model");
 
-
+//http://localhost:8080/forms/submit
 FormRouter.post("/submit", upload.single("photo"), async (req, res) => {
   try {
     // Handle form submission logic here
@@ -42,6 +42,7 @@ FormRouter.post("/submit", upload.single("photo"), async (req, res) => {
   }
 });
 
+//http://localhost:8080/forms
 FormRouter.get("/", async (req, res) => {
   const payload = req.body;
   try {

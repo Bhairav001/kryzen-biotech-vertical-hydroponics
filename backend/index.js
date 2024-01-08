@@ -1,11 +1,12 @@
 const express = require("express");
+const cors = require("cors")
 const { UserRouter } = require("./routes/User.route");
 const { connection } = require("./config/db");
 const { FormRouter } = require("./routes/Form.route");
 
 
 const app = express();
-
+app.use(cors())
 require("dotenv").config()
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));

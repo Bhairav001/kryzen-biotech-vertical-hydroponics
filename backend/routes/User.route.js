@@ -5,7 +5,7 @@ const { UserModel } = require("../model/User.model");
 
 const UserRouter = express.Router();
 
-
+//http://localhost:8080/users/register
 UserRouter.post("/register",async(req,res)=>{
     const {name,email,pass} = req.body
     try {
@@ -22,6 +22,7 @@ UserRouter.post("/register",async(req,res)=>{
     }
 })
 
+//http://localhost:8080/users/login
 UserRouter.post("/login",async(req,res)=>{
     const {email,pass} = (req.body)
     try {
