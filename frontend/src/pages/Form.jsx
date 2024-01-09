@@ -64,7 +64,7 @@ const Form = () => {
     return (
         <div className='flex flex-col md:flex-row'>
             <div className="md:w-1/2 flex items-center justify-center mx-auto">
-                <img src="https://media.istockphoto.com/id/1463013729/photo/online-registration-form-for-modish-form-filling.webp?b=1&s=170667a&w=0&k=20&c=iUOC7YLenExVDT9pfUtJyyIS-dlJvOPyJq1USG4lv5I=" alt="Registration" />
+                <img src="https://wallpapercave.com/wp/wp2234604.jpg" alt="Registration" />
             </div>
             <div className="md:w-1/2 container mx-auto p-4">
                 <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white p-8 rounded shadow-md">

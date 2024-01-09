@@ -61,7 +61,7 @@ function handleChange(e) {
   return (
     <div className='flex flex-col md:flex-row'>
         <div className="md:w-1/2 flex items-center justify-center mx-auto">
-            <img src="https://media.istockphoto.com/id/1463013729/photo/online-registration-form-for-modish-form-filling.webp?b=1&s=170667a&w=0&k=20&c=iUOC7YLenExVDT9pfUtJyyIS-dlJvOPyJq1USG4lv5I=" alt="Registration" />
+            <img src="https://images.unsplash.com/photo-1529539795054-3c162aab037a?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bG9naW58ZW58MHx8MHx8fDA%3D" alt="Registration" />
         </div>
         <div className="md:w-1/2 container mx-auto p-4">
             <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white p-8 rounded shadow-md">

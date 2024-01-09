@@ -30,7 +30,7 @@ UserRouter.post("/login",async(req,res)=>{
         if(user.length>0){
             bcrypt.compare(pass,user[0].pass,(err,result)=>{
                if(result){
-                  let token = jwt.sign({course:"backend"},"masai");
+                  let token = jwt.sign({userID:user[0]._id},"masai");
                   res.send({msg:"user Logggin","token":token})
                }else{
                 res.send({msg:"Something went wrong","error":err})
