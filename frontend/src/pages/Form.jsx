@@ -1,115 +1,86 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from 'react-router-dom';
+import { PDFDocument } from 'pdf-lib';
 
-const Form = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        age: '',
-        address: '',
-    });
-    const [photo, setPhoto] = useState(null);
-    const navigate = useNavigate();
+const FormPreview = () => {
+  const [formData, setFormData] = useState([]);
+  const navigate = useNavigate();
 
-    function handleChange(e) {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/forms");
+        setFormData(response.data);
+      } catch (error) {
+        console.error('Error fetching form data:', error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const generatePDF = async (form) => {
+    console.log("formpdf",form)
+    try {
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage();
+      const { width, height } = page.getSize();
+
+      const formText = `Name: ${form.name}\nAge: ${form.age}\nAddress: ${form.address}`;
+
+      page.drawText(formText, {
+        x: 50,
+        y: height - 200,
+        font: await pdfDoc.embedFont(PDFDocument.Font.Helvetica),
+        fontSize: 12,
+        color: await PDFDocument.rgb(0, 0, 0),
+      });
+
+      if (form.photo) {
+        const imageBytes = await fetch(form.photo).then(res => res.arrayBuffer());
+        const image = await pdfDoc.embedPng(imageBytes);
+        const imageDims = image.scale(0.5);
+        page.drawImage(image, {
+          x: 50,
+          y: height - 400,
+          width: imageDims.width,
+          height: imageDims.height,
+        });
+      }
+
+      const pdfBytes = await pdfDoc.save();
+
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'form-preview.pdf';
+      link.click();
+    } catch (error) {
+      console.error('Error generating PDF:', error);
     }
+  };
 
-    function handlePhotoChange(e) {
-        setPhoto(e.target.files[0]);
-    }
+  const navigateBack = () => {
+    navigate(-1);
+  };
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-
-        if (formData.name === "" || formData.address === "" || formData.age === "") {
-            toast.error("Please enter all details first !", {
-                position: toast.POSITION.TOP_RIGHT,
-            });
-            return;
-        }
-
-        try {
-            const formDataWithPhoto = new FormData();
-            formDataWithPhoto.append("name", formData.name);
-            formDataWithPhoto.append("age", formData.age);
-            formDataWithPhoto.append("address", formData.address);
-            formDataWithPhoto.append("photo", photo);
-
-            const response = await axios.post("http://localhost:8080/forms/submit", formDataWithPhoto, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-
-            console.log('backendData', response);
-            toast.success("Form submitted successfully!", {
-                position: toast.POSITION.TOP_RIGHT,
-            });
-
-            setTimeout(() => {
-                navigate("/formPreview");
-            }, 2000);
-        } catch (error) {
-            console.error('Error submitting form:', error.message);
-            toast.error("Something went wrong!", {
-                position: toast.POSITION.TOP_RIGHT,
-            });
-        }
-    }
-
-    return (
-        <div className='flex flex-col md:flex-row'>
-            <div className="md:w-1/2 flex items-center justify-center mx-auto">
-                <img src="https://media.istockphoto.com/id/1463013729/photo/online-registration-form-for-modish-form-filling.webp?b=1&s=170667a&w=0&k=20&c=iUOC7YLenExVDT9pfUtJyyIS-dlJvOPyJq1USG4lv5I=" alt="Registration" />
-            </div>
-            <div className="md:w-1/2 container mx-auto p-4">
-                <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white p-8 rounded shadow-md">
-                    <input
-                        type="text"
-                        placeholder="Enter name"
-                        value={formData.name}
-                        name="name"
-                        onChange={handleChange}
-                        className="w-full mb-4 p-2 border border-gray-300 rounded"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Enter address"
-                        value={formData.address}
-                        name="address"
-                        onChange={handleChange}
-                        className="w-full mb-4 p-2 border border-gray-300 rounded"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Enter age"
-                        value={formData.age}
-                        name="age"
-                        onChange={handleChange}
-                        className="w-full mb-4 p-2 border border-gray-300 rounded"
-                    />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handlePhotoChange}
-                        className="w-full mb-4 p-2 border border-gray-300 rounded"
-                    />
-
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
-                    >
-                        Submit
-                    </button>
-                    <ToastContainer />
-                </form>
-            </div>
+  return (
+    <div>
+      <h1>Form Preview</h1>
+      {formData.map((form, index) => (
+        <div key={index}>
+          <p>Name: {form.name}</p>
+          <p>Age: {form.age}</p>
+          <p>Address: {form.address}</p>
+          <img src={form.photo} alt="User" style={{ maxWidth: '300px' }} />
+          <button onClick={() => generatePDF(form)}>Generate PDF</button>
         </div>
-    );
+      ))}
+
+      <button onClick={navigateBack}>Go Back</button>
+    </div>
+  );
 };
 
-export default Form;
+export default FormPreview;
